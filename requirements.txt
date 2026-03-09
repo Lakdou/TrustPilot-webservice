@@ -1,7 +1,8 @@
 fastapi
 uvicorn
-pandas
-numpy
-scikit-learn
-nltk
+scikit-learn==1.8.0
 joblib
+pydantic
+nltk
+scipy
+numpy
