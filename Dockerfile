@@ -1,5 +1,5 @@
 # 1. Image de base : On part d'un Python léger (Linux)
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # 2. On définit le dossier de travail dans le conteneur
 WORKDIR /app
