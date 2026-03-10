@@ -115,6 +115,9 @@ def main(raw_data_relative_path="./",
     x_train_bal, y_train_bal = equilibrer_par_index(X_train, y_train_grouped)
     x_test_bal, y_test_bal = equilibrer_par_index(X_test, y_test_grouped)
 
+    y_train_bal = y_train_bal - 1
+    y_test_bal = y_test_bal - 1
+
     logger.info("Train équilibré :", y_train_bal.value_counts())
     logger.info("Test équilibré :", y_test_bal.value_counts())
 
