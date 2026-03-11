@@ -33,15 +33,14 @@ def check_existing_folder(folder_path):
     else:
         return False
 
-def import_raw_data(raw_data_relative_path, 
-                    filenames,
-                    bucket_folder_url):
-    '''import filenames from bucket_folder_url in raw_data_relative_path'''
+def import_raw_data(files_path, raw_data_relative_path, 
+                    filenames):
+    '''import filenames from files_path in raw_data_relative_path'''
     if check_existing_folder(raw_data_relative_path):
         os.makedirs(raw_data_relative_path)
     # download all the files
     for filename in filenames :
-        input_file = os.path.join(bucket_folder_url,filename)
+        input_file = os.path.join(files_path, filename)
         output_file = os.path.join(raw_data_relative_path, filename)
         if check_existing_file(output_file):
             object_url = input_file
@@ -89,16 +88,21 @@ def equilibrer_par_index(x_df, y_series_grouped):
 
 
                 
-def main(raw_data_relative_path="./", 
-        filenames = ["raw.csv"],
-        bucket_folder_url= "https://datascientest-mlops.s3.eu-west-1.amazonaws.com/mlops_dvc_fr/"          
+def main(files_path="./",
+        raw_data_relative_path="./", 
+        filenames = ["df_merged_clean.csv"]        
         ):
-    """ Upload data from AWS s3 in ./
-    """
-    import_raw_data(raw_data_relative_path, filenames, bucket_folder_url)
+    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+    logger = logging.getLogger(__name__)
+
+
+    import_raw_data(raw_data_relative_path, filenames)
+
     logger = logging.getLogger(__name__)
     logger.info('making raw data set')
     df = pd.read_csv("df_merged_clean.csv", sep=",")
+    df = df.head(1000)  # Example: keep only the first 1000 rows
     df = df.dropna(subset=['summary', 'reviewText', 'overall'])
     df = df.rename(columns={'overall': 'score'})
     df['score'] = df['score'].astype(int)

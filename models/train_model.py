@@ -1,32 +1,15 @@
 
+import logging
+import joblib
 import numpy as np
 import pandas as pd
+from sklearn import metrics
 import lightgbm as lgb
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import classification_report, confusion_matrix
-import seaborn as sns
-import matplotlib.pyplot as plt
-import joblib
+import json
+
 
 # =============================================
-# 🔹 Préparation des données texte
-# =============================================
-
-# ⚠️ Remplace ces lignes par ton propre jeu de données :
-# X_train_encoded['text'] = tes phrases
-# X_train_encoded['label'] = tes classes (1, 2, 3 par ex.)
-# Exemple :
-# X_train_encoded = pd.DataFrame({'text': x_text, 'label': y})
-
-
-
-
-X_train_tfidf = pd.read_pickle("../preprocessed_data/X_train_tfidf.pickle")
-X_test_tfidf = pd.read_pickle("../preprocessed_data/X_test_tfidf.pickle")
-
-# =============================================
-# 🔹 Configuration du modèle LightGBM
+#  Configuration du modèle LightGBM
 # =============================================
 
 params = {
@@ -41,62 +24,53 @@ params = {
     'random_state': 42,
     'metric': 'multi_logloss'
 }
-def train_model(model, X_train_tfidf, y_train):
+
+def train_model(model, X_train_tfidf, y_train, X_test_tfidf=None, y_test=None):
     model = lgb.LGBMClassifier(**params)
-
-# =============================================
-# 🔹 Entraînement avec early stopping
-# =============================================
-
-model.fit(
-    X_train_tfidf, y_train,
-    eval_set=[(X_test_tfidf, y_test)],
-    eval_metric='multi_logloss',
-    callbacks=[lgb.early_stopping(50)]
-)
-
-# =============================================
-# 🔹 Prédictions et évaluation
-# =============================================
-
-y_pred = model.predict(X_test_tfidf)
-
-print("\n🔹 Rapport de classification :")
-print(classification_report(y_test, y_pred, digits=3))
-
-# =============================================
-# 🔹 Matrice de confusion
-# =============================================
-
-plt.figure(figsize=(6,5))
-sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues')
-plt.title("Matrice de confusion - LightGBM")
-plt.xlabel("Prédictions")
-plt.ylabel("Véritables classes")
-plt.show()
-
-# =============================================
-# 🔹 Importance des features
-# =============================================
-
-importances = pd.DataFrame({
-    'feature': tfidf.get_feature_names_out(),
-    'importance': model.feature_importances_
-}).sort_values(by='importance', ascending=False)
-
-plt.figure(figsize=(10,6))
-sns.barplot(data=importances.head(20), x='importance', y='feature')
-plt.title("Top 20 mots les plus importants - LightGBM")
-plt.show()
+    model.fit(
+        X_train_tfidf, y_train,
+        eval_set=[(X_test_tfidf, y_test)],
+        eval_metric='multi_logloss',
+        callbacks=[lgb.early_stopping(50)]
+    )
+    return model
 
 
+def calculate_feature_importance(model, tfidf):
+    importances = pd.DataFrame({
+        'feature': tfidf.get_feature_names_out(),
+        'importance': model.feature_importances_
+    }).sort_values(by='importance', ascending=False)
+    return importances
 
 
-# 1. Sauvegarde du modèle entraîné
-joblib.dump(model, 'trustpilot_lgbm_model.pkl')
+if __name__ == "__main__":
+    try:
+        log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        logging.basicConfig(level=logging.INFO, format=log_fmt)
+        logger = logging.getLogger(__name__)
+        
+        X_train_tfidf = pd.read_pickle("../processed_data/X_train_tfidf.pickle")
+        X_test_tfidf = pd.read_pickle("../processed_data/X_test_tfidf.pickle")
+        y_train = pd.read_pickle("../processed_data/y_train.pickle")
+        y_test = pd.read_pickle("../processed_data/y_test.pickle")
+        tfidf = joblib.load("../processed_data/tfidf_vectorizer.pkl")
+        X_test = pd.read_pickle("../processed_data/X_test.pickle")
+        
+        logger.info("Training LightGBM model")
+        model = train_model(lgb.LGBMClassifier(**params), X_train_tfidf, y_train, X_test_tfidf, y_test)
 
-# 2. Sauvegarde du vectoriseur (TRES IMPORTANT)
-# Il contient le vocabulaire exact appris pendant l'entraînement
-joblib.dump(tfidf, 'tfidf_vectorizer.pkl')
+        logger.info("Saving model")
+        joblib.dump(model, 'trustpilot_lgbm_model.pkl') 
+        
+        logger.info("Calculating feature importance")
+        importances = calculate_feature_importance(model, tfidf)
+
+        logger.info("Saving feature importance in metrics/feature_importance.csv")
+        importances.to_csv("../metrics/feature_importance.csv", index=False)
+        
+    except Exception as e:
+        logger.error(e)
+
 
 

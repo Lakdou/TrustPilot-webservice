@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 import logging
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -21,7 +22,7 @@ def vectorize(X_train, X_test) :
         # X_test_tfidf_cols = pd.DataFrame(X_test_tfidf.toarray(), columns=feature_names, index=X_test.index)
 
         # return X_train_tfidf_cols, X_test_tfidf_cols
-        return X_train_tfidf, X_test_tfidf
+        return X_train_tfidf, X_test_tfidf, tfidf
     except Exception as e:
         logger.error(e)
         raise
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
         X_train = pd.read_pickle("X_train.pickle")
         X_test = pd.read_pickle("X_test.pickle")
-        X_train_tfidf, X_test_tfidf = vectorize(X_train, X_test)
+        X_train_tfidf, X_test_tfidf, tfidf = vectorize(X_train, X_test)
         
         # logger.info('calculating VADER score')
         # nltk.download('vader_lexicon', quiet=True)
@@ -53,9 +54,11 @@ if __name__ == '__main__':
         # X_train_final = np.hstack((X_train_tfidf_array, X_train_vader))
         # X_test_final = np.hstack((X_test_tfidf_array, X_test_vader))
 
-        logger.info('saving lemmatized data set')
+        logger.info('saving vectorized data set')
         X_train_tfidf.to_pickle("X_train_tfidf.pickle")
         X_test_tfidf.to_pickle("X_test_tfidf.pickle")
+        joblib.dump(tfidf, "tfidf_vectorizer.pkl")
+
 
     except Exception as e:
         logger.error(e)
