@@ -84,3 +84,4 @@ def monitoring_stats(
     return monitor_service.get_monitoring_stats(
         days_recent=days_recent, days_all=days_all
     )
+

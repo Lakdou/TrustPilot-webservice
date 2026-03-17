@@ -9,6 +9,7 @@ import pandas as pd
 import json
 import base64
 import io
+from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends
 
@@ -24,7 +25,7 @@ router = APIRouter(tags=["Prediction"])
 _quota_lock = threading.Lock()
 
 
-@router.post("/predict/live")
+@router.post("/predict")
 def predict_sentiment(review: Review, api_key: str = Depends(get_api_key)):
     """Prédit le sentiment d'un texte et consomme 1 crédit quota."""
     try:
