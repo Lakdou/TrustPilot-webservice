@@ -39,6 +39,9 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
+
+from backend.app.services import nlp_pipeline
+
 # ── Configuration du logger ────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
@@ -89,35 +92,13 @@ def load_and_clean(csv_path: str) -> pd.DataFrame:
 def preprocess_text(df: pd.DataFrame) -> pd.Series:
     """Merge reviewText + summary, nettoie, tokenise, supprime stopwords, lemmatise."""
     logger.info("Préprocessing texte...")
-    stop_words = set(stopwords.words("english")) | STOP_WORDS_EXTRA
-    lemmatizer = WordNetLemmatizer()
+    df['texts'] = (df["summary"] + " " + df["reviewText"]).str.lower()
 
-    texts = (df["reviewText"] + " " + df["summary"]).str.lower()
-    texts = texts.apply(lambda x: re.sub(r"\.+", "", x))
-    texts = texts.apply(lambda x: re.sub(r"/", " ", x))
-    texts = texts.apply(lambda x: re.sub(r"[0-9]+", "", x))
-
-    def tokenize_and_lemmatize(text: str) -> str:
-        tokens = word_tokenize(text, language="english")
-        tokens = [t for t in tokens if t not in stop_words]
-        lemmes = []
-        seen = set()
-        for t in tokens:
-            l = lemmatizer.lemmatize(t)
-            if l not in seen:
-                seen.add(l)
-                lemmes.append(l)
-        return " ".join(lemmes)
-
-    total = len(texts)
-    result = []
-    for i, text in enumerate(texts):
-        if i % 10_000 == 0:
-            logger.info("  Textes traités : %d / %d", i, total)
-        result.append(tokenize_and_lemmatize(text))
+    total = len(df['texts'])
+    df['texts']=df['texts'].apply(lambda x: nlp_pipeline.processing_pipeline(x), axis=1)
 
     logger.info("Préprocessing terminé.")
-    return pd.Series(result, index=df.index)
+    return df['texts']
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -125,7 +106,7 @@ def preprocess_text(df: pd.DataFrame) -> pd.Series:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def map_labels(y: pd.Series) -> pd.Series:
-    """1,2 → 0 (Négatif) | 3 → 1 (Neutre) | 4,5 → 2 (Positif)"""
+    """1, 2 → 0 (Négatif) | 3 → 1 (Neutre) | 4, 5 → 2 (Positif)"""
     return y.replace({1: 0, 2: 0, 3: 1, 4: 2, 5: 2})
 
 

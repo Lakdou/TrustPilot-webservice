@@ -13,7 +13,6 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-MODELS_DIR = Path(os.getenv("MODELS_DIR", "/app/models"))
 
 
 @st.cache_resource
@@ -23,16 +22,6 @@ def download_nltk_resources():
             nltk.data.find(f"tokenizers/{res}")
         except LookupError:
             nltk.download(res, quiet=True)
-
-
-@st.cache_resource
-def load_model_assets():
-    try:
-        model      = joblib.load(str(MODELS_DIR / "trustpilot_lgbm_model.pkl"))
-        vectorizer = joblib.load(str(MODELS_DIR / "tfidf_vectorizer.pkl"))
-        return model, vectorizer
-    except FileNotFoundError:
-        return None, None
 
 
 # ── Stopwords enrichis ────────────────────────────────────────────────────────
