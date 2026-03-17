@@ -34,3 +34,6 @@ class Review(BaseModel):
 class FeedbackPayload(BaseModel):
     timestamp: str = Field(min_length=1)
     feedback: Literal["correct", "incorrect"]
+
+class Base64(BaseModel):
+    base64: str  # Données encodées en base64

@@ -77,7 +77,6 @@ def load_and_clean(csv_path: str) -> pd.DataFrame:
 
     df["summary"] = df["summary"].fillna("")
     df = df.loc[df["year_y"] > 2009].copy()
-    df = df.dropna(subset=["brand"])
     df = df.reset_index(drop=True)
     logger.info("Lignes après nettoyage : %d", len(df))
     return df
@@ -322,7 +321,7 @@ def train(
         mlflow.log_artifact(str(tfidf_path))
 
         logger.info(
-            "\n✅ Entraînement terminé !\n"
+            "\n Entraînement terminé !\n"
             "   Accuracy  : %.4f\n"
             "   F1-Score  : %.4f\n"
             "   Run ID    : %s\n"

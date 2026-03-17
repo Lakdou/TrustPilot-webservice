@@ -6,6 +6,7 @@ import logging
 import joblib
 
 from ..core.config import MODEL_PATH, VECTORIZER_PATH
+from nlp_pipeline import processing_pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,8 @@ def predict(text: str) -> dict:
     model, vectorizer = get_model()
     if model is None or vectorizer is None:
         raise RuntimeError("Modèle non disponible.")
-
-    vec        = vectorizer.transform([text])
+    clean_text = processing_pipeline(text)
+    vec        = vectorizer.transform([clean_text])
     class_id   = int(model.predict(vec)[0])
     confidence = 100.0
 
