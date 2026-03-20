@@ -24,7 +24,7 @@ def render() -> None:
 
         # ── Auth ──────────────────────────────────────────────────────────────
         if st.session_state["token"] is None:
-            choix = st.radio("", ["Connexion", "Inscription"],
+            choix = st.radio("Authentification", ["Connexion", "Inscription"],
                              horizontal=True, label_visibility="collapsed")
             st.divider()
 

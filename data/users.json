@@ -2,15 +2,16 @@
     "lakdar": {
         "password": "$2b$12$.vCKGhnem.d/IaIrkVMHteQJzJLiECEZCukySBkIxLZiDxAoJtwzm",
         "role": "admin",
-        "api_key": "8e214f16685e41fd7451650f792152b4a5925ace18e24c6b52a5a9b7c875b524",
-        "token_expires_at": "2026-04-14"
+        "api_key": "eccac5f9fff7d2d547b3cfeabb9b8b9432113ae299021a87212c266c572abdfb",
+        "token_expires_at": "2026-04-19"
     },
     "l": {
-        "password": "acac86c0e609ca906f632b0e2dacccb2b77d22b0621f20ebece1a4835b93f6f0",
+        "password": "$2b$12$POQWZzicskq6mqhQf4.rA.L9Y04kH1mFs2aVDKWcocq01/ux.qFw6",
         "role": "user",
-        "api_key": "bcc68408e99c3ffcd2b6594818d202f315ada7c7015979a958f0c650c9b8d1b3",
+        "api_key": "513d028024b13805dea6ee80fa8f5bd25dd077ef4e97b542dcffb7431250c06c",
         "daily_count": 5,
-        "last_request_date": "2026-03-13"
+        "last_request_date": "2026-03-20",
+        "token_expires_at": "2026-04-19"
     },
     "aurore": {
         "password": "110cc34a7c1b3a50e6a9a3f2afb2aa330071e9a5f78543d0221c07eaca2e597c",
@@ -24,5 +25,29 @@
         "token_expires_at": "2026-04-13",
         "daily_count": 2,
         "last_request_date": "2026-03-14"
+    },
+    "string": {
+        "password": "$2b$12$BTTuMqRMjzKiOCBcPiPYu.DolWBXa.aas13W/EVFsb27hJf4oErJq",
+        "role": "user",
+        "api_key": "7075da65063660ebbb0fd799173bbefb0390a71ef82baf81996072802072c332",
+        "token_expires_at": "2026-04-19",
+        "daily_count": 104,
+        "last_request_date": "2026-03-20"
+    },
+    "sss": {
+        "password": "$2b$12$Zx0tJKMmsOTZ9mQJN2PzJetssX2Oh8AEyOWhTpiyG0Gte9pibrdKe",
+        "role": "user",
+        "api_key": "10cae4d2328f129aef755b3fccda0c5fc167f0f77767e7bf0f5e538cb42841e0",
+        "token_expires_at": "2026-04-19",
+        "daily_count": 5,
+        "last_request_date": "2026-03-20"
+    },
+    "aze": {
+        "password": "$2b$12$FvJbb4c3R5JDfGU0LVjMK.441/sxzvhDqJwgISqWansIE76gzfBie",
+        "role": "user",
+        "api_key": "da951c77d2345e0aef152299e743dcc2979f688c879412dccda9dc7e8c0ea9ad",
+        "token_expires_at": "2026-04-19",
+        "daily_count": 5,
+        "last_request_date": "2026-03-20"
     }
 }

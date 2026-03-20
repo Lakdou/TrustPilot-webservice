@@ -306,7 +306,7 @@ def train(
         )
 
         run_id = mlflow.active_run().info.run_id
-        logger.info("Run MLflow : %s", run_id)
+        logger.info(-"Run MLflow : %s", run_id)
 
         # ── Sauvegarde des .pkl dans models/ ────────────────────────────────
         MODELS_DIR.mkdir(parents=True, exist_ok=True)
